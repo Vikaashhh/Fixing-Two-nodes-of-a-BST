@@ -1,31 +1,49 @@
-# 🛠️ Day 92 — GFG 160 Days DSA Challenge
-### 🔄 Problem: Fixing Two Nodes of a BST
-### 📋 Problem Statement:
-In a given Binary Search Tree (BST), exactly two nodes have been swapped by mistake. The goal is to restore the BST without modifying its structure.
+'''
+class Node:
+    def __init__(self, val):
+        self.right = None
+        self.data = val
+        self.left = None
+'''
 
-## 🧠 Core Approach:
-🔹 Inorder Traversal — A valid BST’s inorder should yield a sorted sequence.
-🔹 By identifying two anomalies in the sequence, we pinpoint the swapped nodes.
-🔹 If nodes are non-adjacent → swap the first and last.
-🔹 If adjacent → swap the first and middle.
+class Solution:
+    def correctBST(self, root):
+        # Variables ko self ke through define kiya hai taaki recursive function use kar sake
+        self.first = None
+        self.middle = None
+        self.last = None
+        self.prev = None
 
-This elegant approach ensures an in-place fix in O(n) time and O(h) space.
+        # Inorder traversal se BST ke violation detect karenge
+        def inorder(node):
+            if not node:
+                return
 
-## 📊 Output Summary:
-✅ Test Cases Passed: 200 / 200
+            # Left subtree pe jao
+            inorder(node.left)
 
-⚡ Time Taken: 0.41 sec
+            # Current node ko prev ke sath compare karo
+            if self.prev and node.data < self.prev.data:
+                # Violation mila
+                if not self.first:
+                    self.first = self.prev
+                    self.middle = node
+                else:
+                    self.last = node
 
-🎯 Accuracy: 100%
+            # Prev ko update karo
+            self.prev = node
 
-🏆 Points Scored: 8 / 8
+            # Right subtree pe jao
+            inorder(node.right)
 
-📈 Total Score: 357
+        # Inorder traversal call karo
+        inorder(root)
 
-## 🪄 Reflection:
-“Even the most structured systems can go wrong — but with the right traversal, every disorder has a fix.” 🌱
+        # Ab nodes ko swap karo
+        if self.first and self.last:
+            self.first.data, self.last.data = self.last.data, self.first.data
+        elif self.first and self.middle:
+            self.first.data, self.middle.data = self.middle.data, self.first.data
 
-## 🔖 Hashtags:
-#gfg160 #geekstreak2025 #Day92
-#DSA #BinarySearchTree #InorderTraversal
-#CodingJourney #CleanCode #framesbyvikash #1001DaysOfCode
+        return root
